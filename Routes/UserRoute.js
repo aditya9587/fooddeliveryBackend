@@ -12,9 +12,9 @@ Router.post("/signup", userSignup);
 
 Router.post("/login", userLogin);
 
-Router.get("/user", getUserDetails);
+Router.get("/user",verifyToken, getUserDetails);
 
-Router.put("/user", updateUserDetails);
+Router.put("/updateUser",verifyToken, updateUserDetails);
 
 
 Router.post("/addtocart",verifyToken, addtocart);

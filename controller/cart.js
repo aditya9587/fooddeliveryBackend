@@ -58,15 +58,52 @@ export const getCart = async (req, res) => {
 };
 
 export const removeItem = async (req, res) => {
-  const { itemId } = req.body;
-  Cart.findOne
-    .deleteOne({ itemId })
-    .then(() => {
-      return res.status(200).json({ message: "Item removed from cart" });
-    })
-    .catch((err) => {
-      return res.status(400).json({ error: "Something went wrong" });
+  const { productId } = req.body;
+  const { userId } = req; // Assuming middleware sets this
+
+  try {
+    // Input validation
+    if (!productId) {
+      return res.status(400).json({ 
+        success: false,
+        error: "Product ID is required" 
+      });
+    }
+
+    if (!userId) {
+      return res.status(401).json({ 
+        success: false,
+        error: "User not authenticated" 
+      });
+    }
+
+    // Find and delete the item
+    const deletedItem = await Cart.findOneAndDelete({ 
+      userId, 
+      productId 
     });
+
+    if (!deletedItem) {
+      return res.status(404).json({
+        success: false,
+        error: "Item not found in cart"
+      });
+    }
+
+    // Return success response
+    return res.status(200).json({
+      success: true,
+      message: "Item removed from cart",
+      data: deletedItem
+    });
+
+  } catch (error) {
+    console.error("Error removing item from cart:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error"
+    });
+  }
 };
 
 export const updateItem = async (req, res) => {

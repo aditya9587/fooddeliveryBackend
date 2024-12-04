@@ -52,9 +52,12 @@ export const userLogin = (req, res) => {
 };
 
 export const getUserDetails = async (req, res) => { 
-  const user = await User.findById(req.user.id).select("-password");  
+  const{ userId } = req;
+  const user = await User.findById(userId).select("-password");  
   res.json(user); 
 }
+
+//get user details of login user
 
 export const updateUserDetails = async (req, res) => { 
   const user = await User.findById(req.user.id);
